@@ -1,0 +1,137 @@
+name: Create Releases And Publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Rust setup
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Run tests
+        run: cargo test --verbose
+
+      - name: Build x86_64-unknown-linux-gnu
+        run: |
+          cargo build --verbose --release --target x86_64-unknown-linux-gnu
+
+      - name: Build aarch64-unknown-linux-gnu
+        run: |
+          sudo apt-get update && sudo apt-get install -y gcc-aarch64-linux-gnu
+          rustup target add aarch64-unknown-linux-gnu
+          cargo build --verbose --release --target aarch64-unknown-linux-gnu --config target.aarch64-unknown-linux-gnu.linker=\"aarch64-linux-gnu-gcc\"
+
+      - name: Archive source code as tar.gz
+        run: |
+          mkdir -p target/source
+          git archive --format=tar.gz -o target/source/evremap-${GITHUB_REF##*/}.tar.gz HEAD
+
+      - name: Archive source code as zip
+        run: |
+          mkdir -p target/source
+          git archive --format=zip -o target/source/evremap-${GITHUB_REF##*/}.zip HEAD
+
+      - name: Create GitHub release
+        id: create-release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: ''
+          draft: false
+          prerelease: true
+
+      - name: Upload x86_64-unknown-linux-gnu binary to GitHub release
+        id: upload-x86_64-linux
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: target/x86_64-unknown-linux-gnu/release/evremap
+          asset_name: evremap-x86_64-unknown-linux-gnu
+          asset_content_type: application/octet-stream
+
+      - name: Upload aarch64-unknown-linux-gnu binary to GitHub release
+        id: upload-aarch64-linux
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: target/aarch64-unknown-linux-gnu/release/evremap
+          asset_name: evremap-aarch64-unknown-linux-gnu
+          asset_content_type: application/octet-stream
+
+      - name: Upload tar.gz source archive to GitHub release
+        id: upload-source-targz
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: target/source/evremap-${{ github.ref##*/ }}.tar.gz
+          asset_name: evremap-${{ github.ref##*/ }}.tar.gz
+          asset_content_type: application/gzip
+
+      - name: Upload zip source archive to GitHub release
+        id: upload-source-zip
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: target/source/evremap-${{ github.ref##*/ }}.zip
+          asset_name: evremap-${{ github.ref##*/ }}.zip
+          asset_content_type: application/zip
+
+  build-macos:
+    needs: build-linux
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Rust setup
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          targets: aarch64-apple-darwin, x86_64-apple-darwin
+
+      - name: Build x86_64-apple-darwin binary (Intel Macs)
+        run: cargo build --verbose --release --target x86_64-apple-darwin
+
+      - name: Build aarch64-apple-darwin binary (Apple Silicon)
+        run: cargo build --verbose --release --target aarch64-apple-darwin
+
+      - name: Upload x86_64-apple-darwin binary to GitHub release
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: target/x86_64-apple-darwin/release/evremap
+          asset_name: evremap-x86_64-apple-darwin
+          asset_content_type: application/octet-stream
+
+      - name: Upload aarch64-apple-darwin binary to GitHub release
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: target/aarch64-apple-darwin/release/evremap
+          asset_name: evremap-aarch64-apple-darwin
+          asset_content_type: application/octet-stream
