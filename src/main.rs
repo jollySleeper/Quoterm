@@ -1,12 +1,21 @@
 use crate::quotes::Quote;
 use termion::color;
+use std::process;
 
 pub mod print;
 pub mod quotes;
 pub mod terminal;
+pub mod error;
 
 fn main() {
-    let terminal_length = terminal::get_terminal_length();
+    if let Err(e) = run() {
+        eprintln!("Error: {}", e);
+        process::exit(1);
+    }
+}
+
+fn run() -> Result<(), error::QuotermError> {
+    let terminal_length = terminal::get_terminal_length()?;
     let div_line = "─".repeat(terminal_length);
     let _ = &print::print_colored_message(&div_line, color::Fg(color::Yellow));
 
@@ -25,10 +34,10 @@ fn main() {
             color::Fg(color::Blue),
         );
     } else {
-        let lines: Vec<String> = terminal::get_lines_of_quote_according_to_terminal_and_padding(
+        let lines = terminal::get_lines_of_quote_according_to_terminal_and_padding(
             quote_content.to_string(),
             quote_padding + 1,
-        );
+        )?;
         for line in lines {
             let _ = &print::print_colored_message_with_padding(
                 quote_padding,
@@ -47,9 +56,12 @@ fn main() {
     let quote_author_string = format!("~ {}", &quote_author);
     let quote_author_string_len = quote_author_string.len();
 
+    let author_padding = terminal::get_padding_for_author(quote_author_string_len, quote_padding)?;
     let _ = &print::print_colored_message_with_padding_in_bold(
-        terminal::get_padding_for_author(quote_author_string_len, quote_padding),
+        author_padding,
         &quote_author_string,
         color::Fg(color::Red),
     );
+
+    Ok(())
 }
