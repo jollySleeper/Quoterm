@@ -1,16 +1,22 @@
-use std::fmt;
+use thiserror::Error;
 
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum QuotermError {
+    #[error("Terminal error: {0}")]
     TerminalError(String),
-}
+    
+    #[error("Failed to read quotes file: {0}")]
+    QuotesFileError(String),
+    
+    #[error("Failed to parse quotes: {0}")]
+    QuotesParseError(String),
+    
+    #[error("Invalid quote index: {0}")]
+    QuoteIndexError(String),
 
-impl std::error::Error for QuotermError {}
+    #[error("IO error: {0}")]
+    IoError(#[from] std::io::Error),
 
-impl fmt::Display for QuotermError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            QuotermError::TerminalError(msg) => write!(f, "Terminal error: {}", msg),
-        }
-    }
+    #[error("JSON error: {0}")]
+    JsonError(#[from] serde_json::Error)
 }
