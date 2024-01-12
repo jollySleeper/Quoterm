@@ -2,8 +2,10 @@
  * JSON File used from please-cli
  * Turning this to Rust File so it's gets Build with App
  */
-pub fn get_all_quotes() -> String {
-    return String::from(
+use crate::error::QuotermError;
+
+pub fn get_all_quotes() -> Result<String, QuotermError> {
+    Ok(String::from(
         r#"
         [
         {
@@ -4159,7 +4161,7 @@ pub fn get_all_quotes() -> String {
             "length": 115
         },
         {
-            "_id": "-p4UJJtG2e0g",
+            "_id": "aeAPqvNG3",
             "content": "Knowledge rests not upon truth alone, but upon error also.",
             "author": "Carl Jung",
             "tags": ["famous-quotes"],
@@ -4501,5 +4503,5 @@ pub fn get_all_quotes() -> String {
             "length": 46
         }
         ]"#,
-    );
+    ))
 }

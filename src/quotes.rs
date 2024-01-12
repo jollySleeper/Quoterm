@@ -1,38 +1,30 @@
 use rand::Rng;
-use serde::{Deserialize, Serialize};
+use crate::error::QuotermError;
 
 pub mod quotes_json;
+pub mod models;
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct Quote {
-    content: String,
-    author: String,
-}
+pub use models::Quote;
 
-impl Quote {
-    pub fn get_content(&self) -> &String {
-        &self.content
-    }
-
-    pub fn get_author(&self) -> &String {
-        &self.author
-    }
-}
-
-pub fn get_quotes_as_objects() -> Vec<Quote> {
+pub fn get_quotes_as_objects() -> Result<Vec<Quote>, QuotermError> {
     // Reading JSON File
     let quotes_json = &quotes_json::get_all_quotes();
-    let quotes: Vec<Quote> = serde_json::from_str(quotes_json).unwrap();
+    let quotes: Vec<Quote> = serde_json::from_str(quotes_json)
+        .map_err(|e| QuotermError::QuotesParseError(e.to_string()))?;
 
-    return quotes;
+    Ok(quotes)
 }
 
-pub fn get_random_quote(quotes: Vec<Quote>) -> Quote {
+pub fn get_random_quote(quotes: Vec<Quote>) -> Result<Quote, QuotermError> {
     let entries: usize = quotes.len();
+    if entries == 0 {
+        return Err(QuotermError::QuoteIndexError("No quotes available".to_string()));
+    }
+
     let mut rng = rand::thread_rng();
-
     let index: usize = rng.gen_range(0..entries);
-    let random_quote: &Quote = quotes.get(index).unwrap();
-
-    return random_quote.clone();
+    
+    quotes.get(index)
+        .cloned()
+        .ok_or_else(|| QuotermError::QuoteIndexError(format!("Invalid quote index: {}", index)))
 }
