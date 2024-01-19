@@ -8,6 +8,7 @@ A CLI tool for greeting you and your terminal with beautiful quotes around the d
 - [✨ Features](#features)
 - [🚀 Installation](#installation)
 - [🛠️ Usage](#usage)
+- [⚙️ Configuration](#configuration)
 - [🗑️ Uninstall](#uninstall)
 - [🐛 Bugs or Requests](#bugs-or-requests)
 - [🤝 Contributing](#contributing)
@@ -43,6 +44,50 @@ if type "quoterm" > /dev/null; then
     quoterm 
 fi
 ```
+
+## ⚙️ Configuration
+
+Quoterm can be customized through a configuration file. The file is automatically created with default values when you first run the program.
+
+### Location
+- Linux/macOS: `~/.config/quoterm/config.json`
+- Windows: `%APPDATA%\quoterm\config.json`
+
+### Example Configuration
+```json
+{
+  "colors": {
+    "divider": "yellow",
+    "quote": "blue",
+    "author": "red"
+  }
+}
+```
+
+### Available Colors
+Basic Colors:
+- `"black"`
+- `"red"`
+- `"green"`
+- `"yellow"`
+- `"blue"`
+- `"magenta"`
+- `"cyan"`
+- `"white"`
+
+RGB Colors:
+You can also specify custom RGB colors using an array of three numbers (red, green, blue) between 0 and 255:
+```json
+{
+  "colors": {
+    "divider": [255, 128, 0],  // Orange color
+    "quote": "blue",           // Basic color
+    "author": [100, 150, 200]  // Custom blue shade
+  }
+}
+```
+
+You can find an example configuration file in `config.example.json` in the repository.
 
 ## 🗑️ Uninstall
 
