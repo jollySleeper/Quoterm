@@ -3,24 +3,38 @@ use serde::{Deserialize, Serialize};
 
 pub mod quotes;
 
-#[derive(Deserialize, Serialize, Debug)]
-struct Quote {
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct Quote {
     content: String,
     author: String,
 }
 
-fn main() {
+pub fn get_quotes_as_objects() -> Vec<Quote> {
     // Reading JSON File
-    let json_file: Vec<Quote> = serde_json::from_str(&quotes::get_quotes()).unwrap();
+    let quotes_json = &quotes::get_quotes();
+    let quotes: Vec<Quote> = serde_json::from_str(quotes_json).unwrap();
 
-    let entries: usize = json_file.len();
+    return quotes;
+}
+
+pub fn get_random_quote(quotes: Vec<Quote>) -> Quote {
+    let entries: usize = quotes.len();
     let mut rng = rand::thread_rng();
+
     let index: usize = rng.gen_range(0..entries);
 
-    let random_quote: &Quote = match json_file.get(index) {
-        Some(_x) => json_file.get(index).unwrap(),
-        None => panic!("woops"),
-    };
+    // Use `unwrap` directly since we know the index is valid
+    let random_quote: &Quote = quotes.get(index).unwrap();
 
-    println!("{:?}", random_quote);
+    // Return a clone of the random quote since we are returning by value
+    return random_quote.clone();
+}
+
+fn main() {
+    // Reading JSON File
+    let quotes: Vec<Quote> = get_quotes_as_objects();
+
+    let quote = get_random_quote(quotes);
+
+    println!("{:?}", quote);
 }
