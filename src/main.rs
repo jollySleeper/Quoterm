@@ -1,5 +1,6 @@
 use rand::Rng;
 use serde::{Deserialize, Serialize};
+use termion::{color, style, terminal_size};
 
 pub mod quotes;
 
@@ -37,4 +38,17 @@ fn main() {
     let quote = get_random_quote(quotes);
 
     println!("{:?}", quote);
+
+    let (length, _height) = {
+        let (x, y) = terminal_size().unwrap();
+        (usize::from(x), usize::from(y))
+    };
+
+    println!(
+        "{}{}{:^length$}{}",
+        style::Bold,
+        color::Fg(color::Yellow),
+        "",
+        style::Reset
+    );
 }
