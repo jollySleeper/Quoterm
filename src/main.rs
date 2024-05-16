@@ -1,5 +1,6 @@
 use rand::Rng;
 use serde::{Deserialize, Serialize};
+use std::io::{self, Write};
 use termion::{color, style, terminal_size};
 
 pub mod quotes;
@@ -24,11 +25,14 @@ pub fn get_random_quote(quotes: Vec<Quote>) -> Quote {
 
     let index: usize = rng.gen_range(0..entries);
 
-    // Use `unwrap` directly since we know the index is valid
     let random_quote: &Quote = quotes.get(index).unwrap();
 
-    // Return a clone of the random quote since we are returning by value
     return random_quote.clone();
+}
+
+pub fn print_colored_line<C: color::Color>(length: usize, color: color::Fg<C>) {
+    println!("{}{}{:^length$}{}", style::Bold, color, "", style::Reset);
+    io::stdout().flush().unwrap();
 }
 
 fn main() {
@@ -37,13 +41,12 @@ fn main() {
 
     let quote = get_random_quote(quotes);
 
-    println!("{:?}", quote);
-
     let (length, _height) = {
         let (x, y) = terminal_size().unwrap();
         (usize::from(x), usize::from(y))
     };
 
+    print_colored_line(length, color::Fg(color::Yellow));
     println!(
         "{}{}{:^length$}{}",
         style::Bold,
