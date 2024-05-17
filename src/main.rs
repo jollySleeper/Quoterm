@@ -24,10 +24,18 @@ pub fn get_random_quote(quotes: Vec<Quote>) -> Quote {
     let mut rng = rand::thread_rng();
 
     let index: usize = rng.gen_range(0..entries);
-
     let random_quote: &Quote = quotes.get(index).unwrap();
 
     return random_quote.clone();
+}
+
+pub fn get_terminal_length() {
+    let (length, _) = {
+        let (x, y) = terminal_size().unwrap();
+        (usize::from(x), usize::from(y))
+    };
+
+    return length;
 }
 
 pub fn print_colored_line<C: color::Color>(length: usize, color: color::Fg<C>) {
@@ -41,10 +49,8 @@ fn main() {
 
     let quote = get_random_quote(quotes);
 
-    let (length, _height) = {
-        let (x, y) = terminal_size().unwrap();
-        (usize::from(x), usize::from(y))
-    };
+    let length = get_terminal_length();
+    print_colored_line(length, color::Fg(color::Yellow));
 
     print_colored_line(length, color::Fg(color::Yellow));
     println!(
