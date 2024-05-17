@@ -52,12 +52,41 @@ fn main() {
     let length = get_terminal_length();
     print_colored_line(length, color::Fg(color::Yellow));
 
-    print_colored_line(length, color::Fg(color::Yellow));
+    let mut padding = 0;
+    if quote.content.len() > length {
+        let mut sentences: usize = quote.content.len() / length;
+        if quote.content.len().rem_euclid(length) > 0 {
+            sentences += 1;
+        };
+
+        let mut lines: Vec<String> = vec![String::from(""); usize::from(sentences)];
+        let mut index = 0;
+        for word in quote.content.split_whitespace() {
+            if lines[index].len() + word.len() > length - 3 {
+                index += 1;
+            }
+            lines[index] = format!("{} {}", lines[index], word);
+        }
+
+        for line in lines {
+            println!("{}{}", color::Fg(color::Blue), line);
+        }
+    } else {
+        padding = (length - quote.content.len() - 4) / 2;
+        println!("{:padding$}{}{}", "", color::Fg(color::Blue), quote.content);
+    }
+
+    padding = if padding > 0 {
+        length - quote.author.len() - 10 - padding
+    } else {
+        length - quote.author.len() - 5
+    };
+
     println!(
-        "{}{}{:^length$}{}",
-        style::Bold,
-        color::Fg(color::Yellow),
+        "{:padding$}{}{}~ {}",
         "",
-        style::Reset
+        color::Fg(color::Red),
+        style::Bold,
+        quote.author
     );
 }
