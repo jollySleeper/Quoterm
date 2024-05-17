@@ -29,7 +29,7 @@ pub fn get_random_quote(quotes: Vec<Quote>) -> Quote {
     return random_quote.clone();
 }
 
-pub fn get_terminal_length() {
+pub fn get_terminal_length() -> usize {
     let (length, _) = {
         let (x, y) = terminal_size().unwrap();
         (usize::from(x), usize::from(y))
