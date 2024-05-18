@@ -38,8 +38,13 @@ pub fn get_terminal_length() -> usize {
     return length;
 }
 
-pub fn print_colored_line<C: color::Color>(length: usize, color: color::Fg<C>) {
-    println!("{}{}{:^length$}{}", style::Bold, color, "", style::Reset);
+pub fn print_colored_message_in_bold<C: color::Color>(message: &str, color: color::Fg<C>) {
+    print!("{}", style::Bold);
+    print_colored_message(message, color);
+}
+
+pub fn print_colored_message<C: color::Color>(message: &str, color: color::Fg<C>) {
+    print!("{}{}{}", color, message, style::Reset);
     io::stdout().flush().unwrap();
 }
 
@@ -50,7 +55,8 @@ fn main() {
     let quote = get_random_quote(quotes);
 
     let length = get_terminal_length();
-    print_colored_line(length, color::Fg(color::Yellow));
+    let line = "─".repeat(length);
+    print_colored_message(&line, color::Fg(color::Yellow));
 
     let mut padding = 0;
     if quote.content.len() > length {
