@@ -48,6 +48,24 @@ pub fn print_colored_message<C: color::Color>(message: &str, color: color::Fg<C>
     io::stdout().flush().unwrap();
 }
 
+pub fn print_colored_message_with_padding_in_bold<C: color::Color>(
+    padding: usize,
+    message: &str,
+    color: color::Fg<C>,
+) {
+    print!("{}", style::Bold);
+    print_colored_message_with_padding(padding, message, color);
+}
+
+pub fn print_colored_message_with_padding<C: color::Color>(
+    padding: usize,
+    message: &str,
+    color: color::Fg<C>,
+) {
+    println!("{:padding$}{}{}{}", "", color, message, style::Reset);
+    io::stdout().flush().unwrap();
+}
+
 fn main() {
     // Reading JSON File
     let quotes: Vec<Quote> = get_quotes_as_objects();
@@ -59,15 +77,19 @@ fn main() {
     print_colored_message(&line, color::Fg(color::Yellow));
 
     let mut padding = 0;
-    if quote.content.len() > length {
-        let mut sentences: usize = quote.content.len() / length;
-        if quote.content.len().rem_euclid(length) > 0 {
+    let quote_content = quote.content;
+    let quote_author = quote.author;
+    let quote_length = quote_content.len();
+
+    if quote_content.len() > length {
+        let mut sentences: usize = quote_length / length;
+        if quote_length.rem_euclid(length) > 0 {
             sentences += 1;
         };
 
         let mut lines: Vec<String> = vec![String::from(""); usize::from(sentences)];
         let mut index = 0;
-        for word in quote.content.split_whitespace() {
+        for word in quote_content.split_whitespace() {
             if lines[index].len() + word.len() > length - 3 {
                 index += 1;
             }
@@ -78,21 +100,16 @@ fn main() {
             println!("{}{}", color::Fg(color::Blue), line);
         }
     } else {
-        padding = (length - quote.content.len() - 4) / 2;
-        println!("{:padding$}{}{}", "", color::Fg(color::Blue), quote.content);
+        padding = (length - quote_length - 4) / 2;
+        println!("{:padding$}{}{}", "", color::Fg(color::Blue), quote_content);
     }
 
     padding = if padding > 0 {
-        length - quote.author.len() - 10 - padding
+        length - quote_author.len() - 10 - padding
     } else {
-        length - quote.author.len() - 5
+        length - quote_author.len() - 5
     };
 
-    println!(
-        "{:padding$}{}{}~ {}",
-        "",
-        color::Fg(color::Red),
-        style::Bold,
-        quote.author
-    );
+    let quote_author_string = format!("~ {}", &quote_author);
+    print_colored_message_with_padding(padding, &quote_author_string, color::Fg(color::Red));
 }
