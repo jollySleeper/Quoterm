@@ -111,5 +111,9 @@ fn main() {
     };
 
     let quote_author_string = format!("~ {}", &quote_author);
-    print_colored_message_with_padding(padding, &quote_author_string, color::Fg(color::Red));
+    print_colored_message_with_padding_in_bold(
+        padding,
+        &quote_author_string,
+        color::Fg(color::Red),
+    );
 }
