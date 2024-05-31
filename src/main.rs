@@ -70,11 +70,11 @@ fn main() {
         }
 
         for line in lines {
-            println!("{}{}", color::Fg(color::Blue), line);
+            &print::print_colored_message(&line, color::Fg(color::Blue));
         }
     } else {
         padding = (length - quote_length - 4) / 2;
-        println!("{:padding$}{}{}", "", color::Fg(color::Blue), quote_content);
+        &print::print_colored_message_with_padding(padding, &quote_content, color::Fg(color::Blue));
     }
 
     padding = if padding > 0 {
