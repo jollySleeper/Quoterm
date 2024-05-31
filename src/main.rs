@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use std::io::{self, Write};
 use termion::{color, style, terminal_size};
 
+pub mod print;
 pub mod quotes;
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -38,34 +39,6 @@ pub fn get_terminal_length() -> usize {
     return length;
 }
 
-pub fn print_colored_message<C: color::Color>(message: &str, color: color::Fg<C>) {
-    print!("{}{}{}", color, message, style::Reset);
-    io::stdout().flush().unwrap();
-}
-
-pub fn print_colored_message_in_bold<C: color::Color>(message: &str, color: color::Fg<C>) {
-    print!("{}", style::Bold);
-    print_colored_message(message, color);
-}
-
-pub fn print_colored_message_with_padding<C: color::Color>(
-    padding: usize,
-    message: &str,
-    color: color::Fg<C>,
-) {
-    println!("{:padding$}{}{}{}", "", color, message, style::Reset);
-    io::stdout().flush().unwrap();
-}
-
-pub fn print_colored_message_with_padding_in_bold<C: color::Color>(
-    padding: usize,
-    message: &str,
-    color: color::Fg<C>,
-) {
-    print!("{}", style::Bold);
-    print_colored_message_with_padding(padding, message, color);
-}
-
 fn main() {
     // Reading JSON File
     let quotes: Vec<Quote> = get_quotes_as_objects();
@@ -74,7 +47,7 @@ fn main() {
 
     let length = get_terminal_length();
     let line = "─".repeat(length);
-    print_colored_message(&line, color::Fg(color::Yellow));
+    &print::print_colored_message(&line, color::Fg(color::Yellow));
 
     let mut padding = 0;
     let quote_content = quote.content;
@@ -111,7 +84,7 @@ fn main() {
     };
 
     let quote_author_string = format!("~ {}", &quote_author);
-    print_colored_message_with_padding_in_bold(
+    &print::print_colored_message_with_padding_in_bold(
         padding,
         &quote_author_string,
         color::Fg(color::Red),
