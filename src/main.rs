@@ -77,10 +77,11 @@ fn main() {
         &print::print_colored_message_with_padding(padding, &quote_content, color::Fg(color::Blue));
     }
 
+    let quote_author_str_len = quote_author.len();
     padding = if padding > 0 {
-        length - quote_author.len() - 10 - padding
+        length - quote_author_str_len - 10 - padding
     } else {
-        length - quote_author.len() - 5
+        length - quote_author_str_len - 5
     };
 
     let quote_author_string = format!("~ {}", &quote_author);
