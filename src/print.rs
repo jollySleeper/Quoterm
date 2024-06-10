@@ -12,11 +12,6 @@ pub fn print_colored_message<C: color::Color>(message: &str, color: color::Fg<C>
     flush_output();
 }
 
-pub fn print_colored_message_in_bold<C: color::Color>(message: &str, color: color::Fg<C>) {
-    print!("{}", style::Bold);
-    print_colored_message(message, color);
-}
-
 pub fn print_colored_message_with_padding<C: color::Color>(
     padding: usize,
     message: &str,
@@ -26,11 +21,20 @@ pub fn print_colored_message_with_padding<C: color::Color>(
     flush_output();
 }
 
+fn set_bold_style() {
+    print!("{}", style::Bold);
+}
+
+pub fn print_colored_message_in_bold<C: color::Color>(message: &str, color: color::Fg<C>) {
+    set_bold_style();
+    print_colored_message(message, color);
+}
+
 pub fn print_colored_message_with_padding_in_bold<C: color::Color>(
     padding: usize,
     message: &str,
     color: color::Fg<C>,
 ) {
-    print!("{}", style::Bold);
+    set_bold_style();
     print_colored_message_with_padding(padding, message, color);
 }
