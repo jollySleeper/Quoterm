@@ -1,6 +1,10 @@
+fn flush_output() {
+    io::stdout().flush().unwrap();
+}
+
 pub fn print_colored_message<C: color::Color>(message: &str, color: color::Fg<C>) {
     print!("{}{}{}", color, message, style::Reset);
-    io::stdout().flush().unwrap();
+    flush_output();
 }
 
 pub fn print_colored_message_in_bold<C: color::Color>(message: &str, color: color::Fg<C>) {
@@ -14,7 +18,7 @@ pub fn print_colored_message_with_padding<C: color::Color>(
     color: color::Fg<C>,
 ) {
     println!("{:padding$}{}{}{}", "", color, message, style::Reset);
-    io::stdout().flush().unwrap();
+    flush_output();
 }
 
 pub fn print_colored_message_with_padding_in_bold<C: color::Color>(
