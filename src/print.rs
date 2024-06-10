@@ -1,3 +1,8 @@
+/**
+ * Print Module
+ * All Printing to Terminal in this App is Done by This Module
+ */
+
 fn flush_output() {
     io::stdout().flush().unwrap();
 }
