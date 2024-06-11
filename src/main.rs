@@ -46,21 +46,24 @@ pub fn get_padding_for_author(author_length: usize, sentence_padding: usize) -> 
 }
 
 fn main() {
+    let terminal_length = get_terminal_length();
+    let div_line = "─".repeat(terminal_length);
+    &print::print_colored_message(&div_line, color::Fg(color::Yellow));
+
     // Reading JSON File
     let quotes: Vec<Quote> = get_quotes_as_objects();
     let quote = get_random_quote(quotes);
-
-    let length = get_terminal_length();
-    let line = "─".repeat(length);
-    &print::print_colored_message(&line, color::Fg(color::Yellow));
 
     let mut padding = 0;
     let quote_content = quote.content;
     let quote_author = quote.author;
     let quote_length = quote_content.len();
 
-    if quote_content.len() > length {
-        let mut sentences: usize = quote_length / length;
+    if quote_length <= terminal_length {
+        padding = (terminal_length - quote_length - 4) / 2;
+        &print::print_colored_message_with_padding(padding, &quote_content, color::Fg(color::Blue));
+    } else {
+        let mut sentences: usize = quote_length / terminal_length;
         if quote_length.rem_euclid(length) > 0 {
             sentences += 1;
         };
@@ -68,7 +71,7 @@ fn main() {
         let mut lines: Vec<String> = vec![String::from(""); usize::from(sentences)];
         let mut index = 0;
         for word in quote_content.split_whitespace() {
-            if lines[index].len() + word.len() > length - 3 {
+            if lines[index].len() + word.len() > terminal_length - 3 {
                 index += 1;
             }
             lines[index] = format!("{} {}", lines[index], word);
@@ -77,13 +80,11 @@ fn main() {
         for line in lines {
             &print::print_colored_message(&line, color::Fg(color::Blue));
         }
-    } else {
-        padding = (length - quote_length - 4) / 2;
-        &print::print_colored_message_with_padding(padding, &quote_content, color::Fg(color::Blue));
     }
 
     let quote_author_str_len = quote_author.len();
     let quote_author_string = format!("~ {}", &quote_author);
+
     &print::print_colored_message_with_padding_in_bold(
         get_padding_for_author(quote_author_str_len, padding),
         &quote_author_string,
