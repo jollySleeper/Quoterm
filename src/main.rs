@@ -39,10 +39,15 @@ pub fn get_terminal_length() -> usize {
     return length;
 }
 
+pub fn get_padding_for_author(author_length: usize, sentence_padding: usize) -> usize {
+    let small_padding = if padding > 0 { 10 } else { 5 };
+
+    return get_terminal_length() - author_length - small_padding - sentence_padding;
+}
+
 fn main() {
     // Reading JSON File
     let quotes: Vec<Quote> = get_quotes_as_objects();
-
     let quote = get_random_quote(quotes);
 
     let length = get_terminal_length();
@@ -78,15 +83,9 @@ fn main() {
     }
 
     let quote_author_str_len = quote_author.len();
-    padding = if padding > 0 {
-        length - quote_author_str_len - 10 - padding
-    } else {
-        length - quote_author_str_len - 5
-    };
-
     let quote_author_string = format!("~ {}", &quote_author);
     &print::print_colored_message_with_padding_in_bold(
-        padding,
+        get_padding_for_author(quote_author_str_len, padding),
         &quote_author_string,
         color::Fg(color::Red),
     );
