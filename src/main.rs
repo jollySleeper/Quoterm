@@ -1,7 +1,6 @@
 use rand::Rng;
 use serde::{Deserialize, Serialize};
-use std::io::{self, Write};
-use termion::{color, style, terminal_size};
+use termion::{color, terminal_size};
 
 pub mod print;
 pub mod quotes;
