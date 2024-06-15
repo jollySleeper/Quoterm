@@ -41,7 +41,7 @@ pub fn get_terminal_length() -> usize {
 const TERMINAL_LENGHT: usize = get_terminal_length();
 
 pub fn get_padding_for_author(author_length: usize, sentence_padding: usize) -> usize {
-    let small_padding = if padding > 0 { 10 } else { 5 };
+    let small_padding = if sentence_padding > 0 { 10 } else { 5 };
 
     return get_terminal_length() - author_length - small_padding - sentence_padding;
 }
