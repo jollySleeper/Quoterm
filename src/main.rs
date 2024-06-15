@@ -54,17 +54,21 @@ fn main() {
     let quotes: Vec<Quote> = get_quotes_as_objects();
     let quote = get_random_quote(quotes);
 
-    let mut padding = 0;
     let quote_content = quote.content;
     let quote_author = quote.author;
     let quote_length = quote_content.len();
 
+    let mut quote_padding = 0;
     if quote_length <= terminal_length {
-        padding = (terminal_length - quote_length - 4) / 2;
-        &print::print_colored_message_with_padding(padding, &quote_content, color::Fg(color::Blue));
+        quote_padding = (terminal_length - quote_length - 4) / 2;
+        &print::print_colored_message_with_padding(
+            quote_padding,
+            &quote_content,
+            color::Fg(color::Blue),
+        );
     } else {
         let mut sentences: usize = quote_length / terminal_length;
-        if quote_length.rem_euclid(length) > 0 {
+        if quote_length.rem_euclid(terminal_length) > 0 {
             sentences += 1;
         };
 
@@ -86,7 +90,7 @@ fn main() {
     let quote_author_string = format!("~ {}", &quote_author);
 
     &print::print_colored_message_with_padding_in_bold(
-        get_padding_for_author(quote_author_str_len, padding),
+        get_padding_for_author(quote_author_str_len, quote_padding),
         &quote_author_string,
         color::Fg(color::Red),
     );
