@@ -47,6 +47,15 @@ pub fn get_padding_for_author(author_length: usize, sentence_padding: usize) -> 
     return get_terminal_length() - author_length - small_padding - sentence_padding;
 }
 
+pub fn get_sentences_according_to_terminal(quote_length: usize) -> usize {
+    let mut sentences: usize = quote_length / TERMINAL_LENGHT;
+    if quote_length.rem_euclid(TERMINAL_LENGHT) > 0 {
+        sentences += 1;
+    };
+
+    return sentences;
+}
+
 fn main() {
     let div_line = "─".repeat(TERMINAL_LENGTH);
     &print::print_colored_message(&div_line, color::Fg(color::Yellow));
@@ -68,11 +77,7 @@ fn main() {
             color::Fg(color::Blue),
         );
     } else {
-        let mut sentences: usize = quote_length / terminal_length;
-        if quote_length.rem_euclid(terminal_length) > 0 {
-            sentences += 1;
-        };
-
+        let sentences = get_sentences_according_to_terminal(quote_length);
         let mut lines: Vec<String> = vec![String::from(""); usize::from(sentences)];
         let mut index = 0;
         for word in quote_content.split_whitespace() {
