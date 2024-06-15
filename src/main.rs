@@ -56,6 +56,22 @@ pub fn get_sentences_according_to_terminal(quote_length: usize) -> usize {
     return sentences;
 }
 
+pub fn get_lines_of_quote(quote: String) -> Vec<String> {
+    let sentences_number = get_sentences_according_to_terminal(quote.len());
+    let mut lines: Vec<String> = vec![String::from(""); sentences_number];
+
+    let mut index = 0;
+    // Splitting Content According to Terminal Lenght
+    for word in quote.split_whitespace() {
+        if lines[index].len() + word.len() > TERMINAL_LENGTH - 3 {
+            index += 1;
+        }
+        lines[index] = format!("{} {}", lines[index], word);
+    }
+
+    return lines;
+}
+
 fn main() {
     let div_line = "─".repeat(TERMINAL_LENGTH);
     &print::print_colored_message(&div_line, color::Fg(color::Yellow));
@@ -77,16 +93,7 @@ fn main() {
             color::Fg(color::Blue),
         );
     } else {
-        let sentences = get_sentences_according_to_terminal(quote_length);
-        let mut lines: Vec<String> = vec![String::from(""); usize::from(sentences)];
-        let mut index = 0;
-        for word in quote_content.split_whitespace() {
-            if lines[index].len() + word.len() > TERMINAL_LENGTH - 3 {
-                index += 1;
-            }
-            lines[index] = format!("{} {}", lines[index], word);
-        }
-
+        let lines: Vec<String> = get_lines_of_quote(quote_content);
         for line in lines {
             &print::print_colored_message(&line, color::Fg(color::Blue));
         }
@@ -94,7 +101,6 @@ fn main() {
 
     let quote_author_str_len = quote_author.len();
     let quote_author_string = format!("~ {}", &quote_author);
-
     &print::print_colored_message_with_padding_in_bold(
         get_padding_for_author(quote_author_str_len, quote_padding),
         &quote_author_string,
