@@ -3,6 +3,7 @@
  * All Printing to Terminal in this App is Done by This Module
  */
 use std::io;
+use std::io::Write;
 use termion::{color, style};
 
 fn flush_output() {
