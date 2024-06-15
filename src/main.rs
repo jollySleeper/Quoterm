@@ -39,6 +39,8 @@ pub fn get_terminal_length() -> usize {
     return length;
 }
 
+const TERMINAL_LENGHT: usize = get_terminal_length();
+
 pub fn get_padding_for_author(author_length: usize, sentence_padding: usize) -> usize {
     let small_padding = if padding > 0 { 10 } else { 5 };
 
@@ -46,8 +48,7 @@ pub fn get_padding_for_author(author_length: usize, sentence_padding: usize) -> 
 }
 
 fn main() {
-    let terminal_length = get_terminal_length();
-    let div_line = "─".repeat(terminal_length);
+    let div_line = "─".repeat(TERMINAL_LENGTH);
     &print::print_colored_message(&div_line, color::Fg(color::Yellow));
 
     // Reading JSON File
@@ -59,8 +60,8 @@ fn main() {
     let quote_length = quote_content.len();
 
     let mut quote_padding = 0;
-    if quote_length <= terminal_length {
-        quote_padding = (terminal_length - quote_length - 4) / 2;
+    if quote_length <= TERMINAL_LENGTH {
+        quote_padding = (TERMINAL_LENGTH - quote_length - 4) / 2;
         &print::print_colored_message_with_padding(
             quote_padding,
             &quote_content,
@@ -75,7 +76,7 @@ fn main() {
         let mut lines: Vec<String> = vec![String::from(""); usize::from(sentences)];
         let mut index = 0;
         for word in quote_content.split_whitespace() {
-            if lines[index].len() + word.len() > terminal_length - 3 {
+            if lines[index].len() + word.len() > TERMINAL_LENGTH - 3 {
                 index += 1;
             }
             lines[index] = format!("{} {}", lines[index], word);
