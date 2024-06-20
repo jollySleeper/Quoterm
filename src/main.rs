@@ -38,7 +38,7 @@ pub fn get_terminal_length() -> usize {
     return length;
 }
 
-const TERMINAL_LENGHT: usize = get_terminal_length();
+static TERMINAL_LENGTH: usize = get_terminal_length();
 
 pub fn get_padding_for_author(author_length: usize, sentence_padding: usize) -> usize {
     let small_padding = if sentence_padding > 0 { 10 } else { 5 };
@@ -47,8 +47,8 @@ pub fn get_padding_for_author(author_length: usize, sentence_padding: usize) -> 
 }
 
 pub fn get_sentences_according_to_terminal(quote_length: usize) -> usize {
-    let mut sentences: usize = quote_length / TERMINAL_LENGHT;
-    if quote_length.rem_euclid(TERMINAL_LENGHT) > 0 {
+    let mut sentences: usize = quote_length / TERMINAL_LENGTH;
+    if quote_length.rem_euclid(TERMINAL_LENGTH) > 0 {
         sentences += 1;
     };
 
