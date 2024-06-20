@@ -75,12 +75,10 @@ fn main() {
     let div_line = "─".repeat(TERMINAL_LENGTH);
     &print::print_colored_message(&div_line, color::Fg(color::Yellow));
 
-    // Reading JSON File
     let quotes: Vec<Quote> = get_quotes_as_objects();
     let quote = get_random_quote(quotes);
 
     let quote_content = quote.content;
-    let quote_author = quote.author;
     let quote_length = quote_content.len();
 
     let mut quote_padding = 0;
@@ -98,8 +96,10 @@ fn main() {
         }
     }
 
+    let quote_author = quote.author;
     let quote_author_str_len = quote_author.len();
     let quote_author_string = format!("~ {}", &quote_author);
+
     &print::print_colored_message_with_padding_in_bold(
         get_padding_for_author(quote_author_str_len, quote_padding),
         &quote_author_string,
