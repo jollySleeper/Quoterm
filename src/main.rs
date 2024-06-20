@@ -77,7 +77,7 @@ pub fn get_lines_of_quote(quote: String) -> Vec<String> {
 
 fn main() {
     let div_line = "─".repeat(*TERMINAL_LENGTH);
-    &print::print_colored_message(&div_line, color::Fg(color::Yellow));
+    let _ = &print::print_colored_message(&div_line, color::Fg(color::Yellow));
 
     let quotes: Vec<Quote> = get_quotes_as_objects();
     let quote = get_random_quote(quotes);
@@ -88,7 +88,7 @@ fn main() {
     let mut quote_padding = 0;
     if quote_length <= *TERMINAL_LENGTH {
         quote_padding = (*TERMINAL_LENGTH - quote_length - 4) / 2;
-        &print::print_colored_message_with_padding(
+        let _ = &print::print_colored_message_with_padding(
             quote_padding,
             &quote_content,
             color::Fg(color::Blue),
@@ -96,7 +96,7 @@ fn main() {
     } else {
         let lines: Vec<String> = get_lines_of_quote(quote_content);
         for line in lines {
-            &print::print_colored_message(&line, color::Fg(color::Blue));
+            let _ = &print::print_colored_message(&line, color::Fg(color::Blue));
         }
     }
 
@@ -104,7 +104,7 @@ fn main() {
     let quote_author_str_len = quote_author.len();
     let quote_author_string = format!("~ {}", &quote_author);
 
-    &print::print_colored_message_with_padding_in_bold(
+    let _ = &print::print_colored_message_with_padding_in_bold(
         get_padding_for_author(quote_author_str_len, quote_padding),
         &quote_author_string,
         color::Fg(color::Red),
