@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use termion::{color, terminal_size};
 
 pub mod print;
-pub mod quotes;
+pub mod quotes_json;
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Quote {
@@ -13,7 +13,7 @@ pub struct Quote {
 
 pub fn get_quotes_as_objects() -> Vec<Quote> {
     // Reading JSON File
-    let quotes_json = &quotes::get_quotes();
+    let quotes_json = &quotes_json::get_all_quotes();
     let quotes: Vec<Quote> = serde_json::from_str(quotes_json).unwrap();
 
     return quotes;
