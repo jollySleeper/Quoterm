@@ -1,34 +1,9 @@
-use rand::Rng;
-use serde::{Deserialize, Serialize};
+use crate::quotes::Quote;
 use std::sync::LazyLock;
 use termion::{color, terminal_size};
 
 pub mod print;
-pub mod quotes_json;
-
-#[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct Quote {
-    content: String,
-    author: String,
-}
-
-pub fn get_quotes_as_objects() -> Vec<Quote> {
-    // Reading JSON File
-    let quotes_json = &quotes_json::get_all_quotes();
-    let quotes: Vec<Quote> = serde_json::from_str(quotes_json).unwrap();
-
-    return quotes;
-}
-
-pub fn get_random_quote(quotes: Vec<Quote>) -> Quote {
-    let entries: usize = quotes.len();
-    let mut rng = rand::thread_rng();
-
-    let index: usize = rng.gen_range(0..entries);
-    let random_quote: &Quote = quotes.get(index).unwrap();
-
-    return random_quote.clone();
-}
+pub mod quotes;
 
 pub fn get_terminal_length() -> usize {
     let (length, _) = {
@@ -79,10 +54,10 @@ fn main() {
     let div_line = "─".repeat(*TERMINAL_LENGTH);
     let _ = &print::print_colored_message(&div_line, color::Fg(color::Yellow));
 
-    let quotes: Vec<Quote> = get_quotes_as_objects();
-    let quote = get_random_quote(quotes);
+    let quotes: Vec<Quote> = quotes::get_quotes_as_objects();
+    let quote = &quotes::get_random_quote(quotes);
 
-    let quote_content = quote.content;
+    let quote_content = quote.get_content();
     let quote_length = quote_content.len();
 
     let mut quote_padding = 0;
@@ -94,13 +69,13 @@ fn main() {
             color::Fg(color::Blue),
         );
     } else {
-        let lines: Vec<String> = get_lines_of_quote(quote_content);
+        let lines: Vec<String> = get_lines_of_quote(quote_content.to_string());
         for line in lines {
             let _ = &print::print_colored_message(&line, color::Fg(color::Blue));
         }
     }
 
-    let quote_author = quote.author;
+    let quote_author = quote.get_author();
     let quote_author_str_len = quote_author.len();
     let quote_author_string = format!("~ {}", &quote_author);
 
