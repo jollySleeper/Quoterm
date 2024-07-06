@@ -1,6 +1,8 @@
 # 🗨️ Quoterm
 A CLI tool for Greeting you with beautiful quotes around the day.
 
+![Quoterm](./screenshot.png)
+
 ## 📖 Table of Contents
 
 - [✨ Features](#features)
