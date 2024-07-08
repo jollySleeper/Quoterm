@@ -42,11 +42,11 @@ fn main() {
     }
 
     let quote_author = quote.get_author();
-    let quote_author_str_len = quote_author.len();
     let quote_author_string = format!("~ {}", &quote_author);
+    let quote_author_string_len = quote_author_string.len();
 
     let _ = &print::print_colored_message_with_padding_in_bold(
-        terminal::get_padding_for_author(quote_author_str_len, quote_padding),
+        terminal::get_padding_for_author(quote_author_string_len, quote_padding),
         &quote_author_string,
         color::Fg(color::Red),
     );
