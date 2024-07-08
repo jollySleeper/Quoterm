@@ -11,7 +11,7 @@ fn flush_output() {
 }
 
 pub fn print_colored_message<C: color::Color>(message: &str, color: color::Fg<C>) {
-    print!("{}{}{}", color, message, style::Reset);
+    println!("{}{}{}", color, message, style::Reset);
     flush_output();
 }
 
