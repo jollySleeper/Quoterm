@@ -25,8 +25,10 @@ fn main() {
             color::Fg(color::Blue),
         );
     } else {
-        let lines: Vec<String> =
-            terminal::get_lines_of_quote_according_to_terminal(quote_content.to_string());
+        let lines: Vec<String> = terminal::get_lines_of_quote_according_to_terminal_and_padding(
+            quote_content.to_string(),
+            quote_padding + 1,
+        );
         for line in lines {
             let _ = &print::print_colored_message_with_padding(
                 quote_padding,
