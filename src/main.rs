@@ -16,9 +16,9 @@ fn main() {
     let quote_content = quote.get_content();
     let quote_length = quote_content.len();
 
-    let mut quote_padding = 0;
-    if quote_length <= terminal_length {
-        quote_padding = (terminal_length - quote_length - 4) / 2;
+    let mut quote_padding = 2;
+    if quote_length <= (terminal_length - (quote_padding * 2) - 1) {
+        quote_padding = (terminal_length - quote_length - (quote_padding * 2)) / 2;
         let _ = &print::print_colored_message_with_padding(
             quote_padding,
             &quote_content,
