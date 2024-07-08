@@ -28,7 +28,16 @@ fn main() {
         let lines: Vec<String> =
             terminal::get_lines_of_quote_according_to_terminal(quote_content.to_string());
         for line in lines {
-            let _ = &print::print_colored_message(&line, color::Fg(color::Blue));
+            let _ = &print::print_colored_message_with_padding(
+                quote_padding,
+                &line,
+                color::Fg(color::Blue),
+            );
+            quote_padding = if quote_padding < 3 {
+                quote_padding + 1
+            } else {
+                quote_padding
+            };
         }
     }
 
