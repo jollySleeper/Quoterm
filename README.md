@@ -1,5 +1,5 @@
 # 🗨️ Quoterm
-A CLI tool for Greeting you with beautiful quotes around the day.
+A CLI tool for greeting you and your terminal with beautiful quotes around the day.
 
 ![Quoterm](./screenshot.png)
 
@@ -16,9 +16,9 @@ A CLI tool for Greeting you with beautiful quotes around the day.
 
 ## ✨ Features
 
-- **Quotes**: Greets you with random quotes everytime you open your terminal.
+- **Quotes**: Greets you with random quotes every time you open your terminal.
 - **Reactive**: Formatting changes based on the width of your terminal.
-- **Stay Motivated**: Get motivational & thought provoking quotes.
+- **Stay Motivated**: Get motivational & thought-provoking quotes.
 
 ## 🚀 Installation
 > Please note that you should have [Rust](https://rust-lang.org) installed on your system.
@@ -35,9 +35,9 @@ cargo install --path .
 ```
 
 ## 🛠️ Usage
-> Please add `~/.cargo/bin/` to your PATH
+> Please add `~/.cargo/bin/` to your PATH.
 
-- Add the following snippet to your shell rc file at the end.
+- Append the following snippet to your shell rc file:
 ```sh .bashrc/.zshrc
 if type "quoterm" > /dev/null; then
     quoterm 
@@ -46,8 +46,8 @@ fi
 
 ## 🗑️ Uninstall
 
-Sorry to hear that this project didn't meet your expectations. Please help us with your feedback.
-For uninstalling run `rm ~/.cargo/bin/quoterm` from terminal and delete the Quoterm foler using `rm -r quoterm` command.
+If you decide to uninstall, we're sorry to hear that `quoterm` didn't meet your expectations. We appreciate your feedback. 
+To uninstall, run `rm ~/.cargo/bin/quoterm` from terminal and delete the Quoterm folder using `rm -r quoterm` command.
 
 ## 🐛 Bugs or Requests
 
@@ -70,5 +70,5 @@ This project is licensed under the MIT License - see the [LICENSE](https://githu
 
 ## 🙏 Acknowledgments
 
-- This Project takes inspiration from [Please](https://github.com/NayamAmarshe/please) and many other similar projects.
-- The quotes displayed by this CLI tools is provided by the JSON File in [Please](https://github.com/NayamAmarshe/please).
+- This project takes inspiration from [Please](https://github.com/NayamAmarshe/please) and many other similar projects.
+- The quotes displayed by this CLI tool is provided by the JSON File in [Please](https://github.com/NayamAmarshe/please).
