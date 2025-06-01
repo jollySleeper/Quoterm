@@ -82,8 +82,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: target/source/evremap-${{ github.ref##*/ }}.tar.gz
-          asset_name: evremap-${{ github.ref##*/ }}.tar.gz
+          asset_path: target/source/evremap-${{ github.ref_name }}.tar.gz
+          asset_name: evremap-${{ github.ref_name }}.tar.gz
           asset_content_type: application/gzip
 
       - name: Upload zip source archive to GitHub release
@@ -93,8 +93,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: target/source/evremap-${{ github.ref##*/ }}.zip
-          asset_name: evremap-${{ github.ref##*/ }}.zip
+          asset_path: target/source/evremap-${{ github.ref_name }}.zip
+          asset_name: evremap-${{ github.ref_name }}.zip
           asset_content_type: application/zip
 
   build-macos:
