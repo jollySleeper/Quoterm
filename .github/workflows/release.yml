@@ -15,34 +15,40 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Rust setup
-        uses: actions-rs/toolchain@v1
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
-          targets: x86_64-unknown-linux-gnu, aarch64-unknown-linux-gnu
+          targets: x86_64-unknown-linux-gnu,aarch64-unknown-linux-gnu
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: "release-build"
+          cache-on-failure: true
 
       - name: Run tests
-        run: cargo test --verbose
-
-      - name: Build x86_64-unknown-linux-gnu
+        run: cargo test --verbose --release --all-features --jobs $(nproc)
+        
+      - name: Build all targets
         run: |
-          cargo build --verbose --release --target x86_64-unknown-linux-gnu
-
-      - name: Build aarch64-unknown-linux-gnu
-        run: |
+          cargo build --verbose --release --target x86_64-unknown-linux-gnu --jobs $(nproc)
           sudo apt-get update && sudo apt-get install -y gcc-aarch64-linux-gnu
-          rustup target add aarch64-unknown-linux-gnu
-          cargo build --verbose --release --target aarch64-unknown-linux-gnu --config target.aarch64-unknown-linux-gnu.linker=\"aarch64-linux-gnu-gcc\"
+          cargo build --verbose --release --target aarch64-unknown-linux-gnu --jobs $(nproc) --config target.aarch64-unknown-linux-gnu.linker=\"aarch64-linux-gnu-gcc\"
+
+      - name: Strip binaries
+        run: |
+          strip target/x86_64-unknown-linux-gnu/release/quoterm
+          aarch64-linux-gnu-strip target/aarch64-unknown-linux-gnu/release/quoterm
 
       - name: Archive source code as tar.gz
         run: |
           mkdir -p target/source
-          git archive --format=tar.gz -o target/source/evremap-${{ github.ref_name }}.tar.gz HEAD
+          git archive --format=tar.gz -o target/source/quoterm-${{ github.ref_name }}.tar.gz HEAD
 
       - name: Archive source code as zip
         run: |
           mkdir -p target/source
-          git archive --format=zip -o target/source/evremap-${{ github.ref_name }}.zip HEAD
+          git archive --format=zip -o target/source/quoterm-${{ github.ref_name }}.zip HEAD
 
       - name: Create GitHub release
         id: create-release
@@ -54,7 +60,7 @@ jobs:
           release_name: Release ${{ github.ref_name }}
           body: ''
           draft: false
-          prerelease: true
+          prerelease: false
 
       - name: Upload x86_64-unknown-linux-gnu binary to GitHub release
         id: upload-x86_64-linux
@@ -63,8 +69,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: target/x86_64-unknown-linux-gnu/release/evremap
-          asset_name: evremap-x86_64-unknown-linux-gnu
+          asset_path: target/x86_64-unknown-linux-gnu/release/quoterm
+          asset_name: quoterm-x86_64-unknown-linux-gnu
           asset_content_type: application/octet-stream
 
       - name: Upload aarch64-unknown-linux-gnu binary to GitHub release
@@ -74,8 +80,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: target/aarch64-unknown-linux-gnu/release/evremap
-          asset_name: evremap-aarch64-unknown-linux-gnu
+          asset_path: target/aarch64-unknown-linux-gnu/release/quoterm
+          asset_name: quoterm-aarch64-unknown-linux-gnu
           asset_content_type: application/octet-stream
 
       - name: Upload tar.gz source archive to GitHub release
@@ -85,8 +91,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: target/source/evremap-${{ github.ref_name }}.tar.gz
-          asset_name: evremap-${{ github.ref_name }}.tar.gz
+          asset_path: target/source/quoterm-${{ github.ref_name }}.tar.gz
+          asset_name: quoterm-${{ github.ref_name }}.tar.gz
           asset_content_type: application/gzip
 
       - name: Upload zip source archive to GitHub release
@@ -96,8 +102,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: target/source/evremap-${{ github.ref_name }}.zip
-          asset_name: evremap-${{ github.ref_name }}.zip
+          asset_path: target/source/quoterm-${{ github.ref_name }}.zip
+          asset_name: quoterm-${{ github.ref_name }}.zip
           asset_content_type: application/zip
 
   build-macos:
@@ -109,17 +115,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Rust setup
-        uses: actions-rs/toolchain@v1
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
-          targets: aarch64-apple-darwin, x86_64-apple-darwin
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
 
-      - name: Build x86_64-apple-darwin binary (Intel Macs)
-        run: cargo build --verbose --release --target x86_64-apple-darwin
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: "release-build"
+          cache-on-failure: true
 
-      - name: Build aarch64-apple-darwin binary (Apple Silicon)
-        run: cargo build --verbose --release --target aarch64-apple-darwin
+      - name: Build all targets
+        run: |
+          cargo build --verbose --release --target x86_64-apple-darwin --jobs $(sysctl -n hw.ncpu)
+          cargo build --verbose --release --target aarch64-apple-darwin --jobs $(sysctl -n hw.ncpu)
+
+      - name: Strip binaries
+        run: |
+          strip target/x86_64-apple-darwin/release/quoterm
+          strip target/aarch64-apple-darwin/release/quoterm
 
       - name: Upload x86_64-apple-darwin binary to GitHub release
         uses: actions/upload-release-asset@v1.0.1
@@ -127,8 +142,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: target/x86_64-apple-darwin/release/evremap
-          asset_name: evremap-x86_64-apple-darwin
+          asset_path: target/x86_64-apple-darwin/release/quoterm
+          asset_name: quoterm-x86_64-apple-darwin
           asset_content_type: application/octet-stream
 
       - name: Upload aarch64-apple-darwin binary to GitHub release
@@ -137,6 +152,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: target/aarch64-apple-darwin/release/evremap
-          asset_name: evremap-aarch64-apple-darwin
+          asset_path: target/aarch64-apple-darwin/release/quoterm
+          asset_name: quoterm-aarch64-apple-darwin
           asset_content_type: application/octet-stream
